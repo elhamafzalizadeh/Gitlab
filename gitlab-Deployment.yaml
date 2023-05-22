@@ -1,1 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab
+  namespace: gitlab
+  labels:
+    app: gitlab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gitlab
+  template:
+    metadata:
+      labels:
+        app: gitlab
+    spec:
+      containers:
+      - name: gitlab
+        image: repo.asax.ir/gitlab/gitlab-ce:15.11.4-ce.0 
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: external_url
+          value: "https://gitops.asax.ir"
+        volumeMounts:
+         - name: gitlab-storage
+           mountPath: "/opt/gitlab/config"
+         - name: gitlab-storage
+           mountPath: "/opt/gitlab/logs"
+         - name: gitlab-storage
+           mountPath: "/opt/gitlab/data"
+      volumes:
+      - name: gitlab-storage
+        persistentVolumeClaim:
+         claimName: gitlab-pv-claim           
 
